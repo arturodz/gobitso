@@ -1,4 +1,4 @@
-package bitstamp
+package bitso
 
 import (
 	"crypto/hmac"
@@ -17,14 +17,14 @@ import (
 
 var _cliId, _key, _secret string
 
-var _url string = "https://www.bitstamp.net/api"
+var _url string = "https://api.bitso.com/v2"
 
 type AccountBalanceResult struct {
-	UsdBalance   float64 `json:"usd_balance,string"`
+	MxnBalance   float64 `json:"mxn_balance,string"`
 	BtcBalance   float64 `json:"btc_balance,string"`
-	UsdReserved  float64 `json:"usd_reserved,string"`
+	MxnReserved  float64 `json:"mxn_reserved,string"`
 	BtcReserved  float64 `json:"btc_reserved,string"`
-	UsdAvailable float64 `json:"usd_available,string"`
+	MxnAvailable float64 `json:"mxn_available,string"`
 	BtcAvailable float64 `json:"btc_available,string"`
 	Fee          float64 `json:"fee,string"`
 }
@@ -49,7 +49,7 @@ type UserTransactionResult struct {
 	Id       int64   `json:"id,int64"`
 	DateTime string  `json:"datetime"`
 	Type     int     `json:"type,int"`
-	Usd      float64 `json:"usd,string"`
+	Mxn      float64 `json:"mxn,string"`
 	Btc      float64 `json:"btc,string"`
 	Fee      float64 `json:"fee,string"`
 	OrderId  int64   `json:"order_id,int64"`
@@ -57,9 +57,9 @@ type UserTransactionResult struct {
 
 type OrderTransactionsResult struct {
 	TotalFee       float64
-	TotalUsdAmount float64
+	TotalMxnAmount float64
 	TotalBtcAmount float64
-	UsdPerBtc      float64
+	MxnPerBtc      float64
 }
 
 func SetAuth(clientId, key, secret string) {
@@ -203,10 +203,10 @@ func OrderTransactions(orderId int64) (*OrderTransactionsResult, error) {
 	for i := 0; i < len(ut); i++ {
 		if ut[i].OrderId == orderId {
 			ot.TotalFee += math.Abs(ut[i].Fee)
-			ot.TotalUsdAmount += math.Abs(ut[i].Usd)
+			ot.TotalMxnAmount += math.Abs(ut[i].Mxn)
 			ot.TotalBtcAmount += math.Abs(ut[i].Btc)
 		}
 	}
-	ot.UsdPerBtc = ot.TotalUsdAmount / ot.TotalBtcAmount
+	ot.MxnPerBtc = ot.TotalMxnAmount / ot.TotalBtcAmount
 	return ot, nil
 }

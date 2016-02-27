@@ -1,4 +1,4 @@
-package bitstamp
+package bitso
 
 import (
 	"encoding/json"
@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var _socketurl string = "wss://ws.pusherapp.com/app/de504dc5763aeef9ff52?protocol=7&client=js&version=2.1.6&flash=false"
+var _socketurl string = "wss://ws.bitso.com"
 
 type WebSocket struct {
 	ws     *websocket.Conn
