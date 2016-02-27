@@ -1,7 +1,11 @@
-bitstamp-go
+gobitso
 ===========
 
-A client implementation of the Bitstamp API, including websockets, in Golang.
+A client implementation of the Bitso API, including websockets, in Golang.
+
+This API wrapper was forked from [AJPH bitstamp api wrapper]("https://github.com/ajph/bitstamp-go").
+
+This API hasn't been tested and is missing several Bitso specific endpoints.
 
 Example Usage
 -----
@@ -14,10 +18,10 @@ import (
 	"log"
 
 	"github.com/gorilla/websocket"
-	"github.com/ajph/bitstamp-go"
+	"github.com/arturodz/gobitso"
 )
 
-func handleEvent(e *bitstamp.Event) {
+func handleEvent(e *bitso.Event) {
 	switch e.Event {
 	// pusher stuff
 	case "pusher:connection_established":
@@ -29,7 +33,7 @@ func handleEvent(e *bitstamp.Event) {
 	case "pusher:ping":
 		Ws.Pong()
 
-	// bitstamp
+	// bitso
 	case "trade":
 		fmt.Printf("%#v\n", e.Data)
 
@@ -41,30 +45,30 @@ func handleEvent(e *bitstamp.Event) {
 
 func main() {
 
-	// setup bitstamp api
-	bitstamp.SetAuth("123456", "key", "secret")
+	// setup bitso api
+	bitso.SetAuth("123456", "key", "secret")
 
 	// get balance
-	_, err := bitstamp.AccountBalance()
+	_, err := bitso.AccountBalance()
 	if err != nil {
-		fmt.Printf("Can't get balance using bitstamp API: %s\n", err)
+		fmt.Printf("Can't get balance using bitso API: %s\n", err)
 		return
 	}
 	fmt.Println("\nAvailable Balances:")
-	fmt.Printf("USD %f\n", balance.UsdAvailable)
-	fmt.Printf("BTC %f\n", balance.BtcAvailable)	
+	fmt.Printf("MXN %f\n", balance.UsdAvailable)
+	fmt.Printf("BTC %f\n", balance.BtcAvailable)
 	fmt.Printf("FEE %f\n\n", balance.Fee)
 
 	// attempt to place a buy order
-	order, err := bitstamp.BuyLimitOrder(0.5, 600.00)
+	order, err := bitso.BuyLimitOrder(0.5, 600.00)
 	if err != nil {
 		log.Printf("Error placing buy order: %s", err)
 		return
 	}
-	
+
 	// check order				
-	var orderRes *bitstamp.OrderTransactionsResult									
-	orderRes, err = bitstamp.OrderTransactions(order.Id)
+	var orderRes *bitso.OrderTransactionsResult									
+	orderRes, err = bitso.OrderTransactions(order.Id)
 	if err != nil {
 		log.Printf("Error checking status of buy order #%d %s. Retrying...", order.Id, err)
 		return
@@ -76,11 +80,11 @@ func main() {
 	}
 
 	// websocket read loop
-	for {	
+	for {
 		// connect
 		log.Println("Dialing...")
 		var err error
-		Ws, err = bitstamp.NewWebSocket(WS_TIMEOUT)
+		Ws, err = bitso.NewWebSocket(WS_TIMEOUT)
 		if err != nil {
 			log.Printf("Error connecting: %s", err)
 			time.Sleep(1 * time.Second)
@@ -105,12 +109,7 @@ L:
 
 			}
 		}
-	}	
+	}
 
 }
 ```
-
-Todo
-----
-- Documentation
-- Tests
